@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const clipboardy = require("clipboardy");
 const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
+const { saveToFile } = require("./exporter");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -66,8 +67,8 @@ const timeHandler = () => {
   clipboardy
     .read()
     .then(data => {
-      let clip = data.trim()
-      if(! (clip === lastClip)){
+      let clip = data.trim();
+      if (!(clip === lastClip)) {
         win.webContents.send(CLIPBOARD_LISTENER.DATA, clip);
         lastClip = clip;
       }
@@ -104,5 +105,14 @@ ipcMain.on(CLIPBOARD_LISTENER.STOP, (event, arg) => {
 ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, arg) => {
   console.log("goind to export");
   console.log(JSON.stringify(arg));
-  event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+  if (arg.clips.length > 0) {
+    saveToFile(`./${arg.filename}`, arg.clips)
+      .then(() => {
+        event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+      })
+      .catch(err => {
+        console.error(err);
+        event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+      });
+  }
 });
