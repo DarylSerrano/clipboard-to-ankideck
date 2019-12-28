@@ -1,9 +1,15 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const clipboardy = require("clipboardy");
+const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+
+let listening = false;
+
+let timeouId = undefined;
+let lastClip = "";
 
 function createWindow() {
   // Create the browser window.
@@ -29,9 +35,9 @@ function createWindow() {
     win = null;
   });
 
-  win.webContents.on("did-finish-load", () => {
-    startTimer();
-  });
+  // win.webContents.on("did-finish-load", () => {
+  //   startTimer();
+  // });
 }
 
 // This method will be called when Electron has finished
@@ -57,18 +63,46 @@ app.on("activate", () => {
 });
 
 const timeHandler = () => {
-  let clipboard = clipboardy.readSync();
-  clipboard = clipboard.trim();
-  // let buf = iconv.encode(clipboard, 'utf-8');
-  // console.log(buf.toString());
-  // writeStream.write(buf);
-  win.webContents.send("clip", clipboard);
-  startTimer();
+  clipboardy
+    .read()
+    .then(data => {
+      let clip = data.trim()
+      if(! (clip === lastClip)){
+        win.webContents.send(CLIPBOARD_LISTENER.DATA, clip);
+        lastClip = clip;
+      }
+      timeouId = startTimer();
+    })
+    .catch(err => {
+      console.error(err);
+    });
 };
 
-const startTimer = () => {
-  setTimeout(timeHandler, 5000);
-};
+function startTimer() {
+  return setTimeout(timeHandler, 5000);
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on(CLIPBOARD_LISTENER.START, (event, arg) => {
+  console.log(arg); // prints "ping"
+  if (!listening) {
+    timeouId = startTimer();
+    listening = true;
+  }
+  // event.reply('asynchronous-reply', 'pong')
+});
+
+ipcMain.on(CLIPBOARD_LISTENER.STOP, (event, arg) => {
+  if (listening && timeouId) {
+    clearTimeout(timeouId);
+  }
+  listening = false;
+});
+
+ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, arg) => {
+  console.log("goind to export");
+  console.log(JSON.stringify(arg));
+  event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+});
