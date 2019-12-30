@@ -1,25 +1,47 @@
 {
-  "name": "electron-test",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^7.1.7",
-    "eslint": "^6.8.0"
-  },
+  "name": "clipboard-to-ankideck",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "bootstrap": "^4.4.1",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1",
+    "antd": "^3.26.5",
     "clipboardy": "^2.1.0",
-    "csv": "^5.3.1",
     "faker": "^4.1.0",
-    "hashmap": "^2.4.0",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.0"
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0"
+  },
+  "homepage": "./",
+  "main": "src/electron-starter.js",
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dev": "nf start",
+    "electron-dev:win": "set ELECTRON_START_URL=http://localhost:3000 && electron ."
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "craco": "0.0.3",
+    "electron": "^7.1.7",
+    "foreman": "^3.0.1"
   }
 }
