@@ -8,6 +8,8 @@
     "@testing-library/user-event": "^7.2.1",
     "antd": "^3.26.5",
     "clipboardy": "^2.1.0",
+    "csv": "^5.3.1",
+    "electron-log": "^4.0.2",
     "faker": "^4.1.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -42,6 +44,7 @@
   "devDependencies": {
     "craco": "0.0.3",
     "electron": "^7.1.7",
+    "electron-devtools-installer": "^2.2.4",
     "foreman": "^3.0.1"
   }
 }

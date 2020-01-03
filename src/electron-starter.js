@@ -1,15 +1,39 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const url = require("url");
+// const os = require("os");
 // const faker = require("faker");
 const clipboardy = require("clipboardy");
+const { saveToFile } = require("./exporter");
+const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
+const log = require('electron-log');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let listening = false;
+let timeouId = undefined;
+let lastClip = "";
 
-function createWindow() {
+async function createWindow() {
+  if (process.env.NODE_ENV === "development") {
+    // const {
+    //   default: installExtension,
+    //   REACT_DEVELOPER_TOOLS
+    // } = require("electron-devtools-installer");
+    // await installExtension(REACT_DEVELOPER_TOOLS)
+
+    // Add react dev tools for windows
+    // BrowserWindow.addDevToolsExtension(
+    //   path.join(
+    //     os.homedir(),
+    //     "/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0"
+    //   )
+    // );
+  }
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -38,7 +62,9 @@ function createWindow() {
   // mainWindow.loadURL('http://localhost:3000');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {
@@ -47,8 +73,6 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
-
-  startTimer();
 }
 
 // This method will be called when Electron has finished
@@ -71,20 +95,59 @@ app.on("activate", function() {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-function timeHandler() {
+const timeHandler = () => {
   clipboardy
     .read()
     .then(data => {
       let clip = data.trim();
-      mainWindow.webContents.send("data", clip);
-      startTimer();
+      if (!(clip === lastClip)) {
+        log.info("sending data: " + clip);
+        mainWindow.webContents.send(CLIPBOARD_LISTENER.DATA, clip);
+        lastClip = clip;
+      }
+      timeouId = startTimer();
     })
     .catch(err => {
-      console.error(err);
+      log.error(err);
     });
-}
+};
 
 function startTimer() {
-  console.log("start timer");
   return setTimeout(timeHandler, 5000);
 }
+
+ipcMain.on(CLIPBOARD_LISTENER.START, (event, arg) => {
+  log.info(arg); // prints "ping"
+  if (!listening) {
+    timeouId = startTimer();
+    listening = true;
+  }
+  // event.reply('asynchronous-reply', 'pong')
+});
+
+ipcMain.on(CLIPBOARD_LISTENER.STOP, (event, arg) => {
+  if (listening && timeouId) {
+    clearTimeout(timeouId);
+  }
+  listening = false;
+});
+
+ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, args) => {
+  log.info("goind to export");
+  log.info(JSON.stringify(args));
+  if (args.data.lenght > 0) {
+    saveToFile(args.filepath, args.clips)
+      .then(savePath => {
+        // Show finished dialog
+        event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+        dialog.showMessageBox({
+          type: "info",
+          message: `Successfully saved into: ${savePath}`
+        });
+      })
+      .catch(err => {
+        log.error(err);
+        event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+      });
+  }
+});
