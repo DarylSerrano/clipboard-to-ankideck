@@ -7,8 +7,7 @@ const url = require("url");
 const clipboardy = require("clipboardy");
 const { saveToFile } = require("./main/exporter");
 const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
-const log = require('electron-log');
-
+const log = require("electron-log");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -18,22 +17,6 @@ let timeouId = undefined;
 let lastClip = "";
 
 async function createWindow() {
-  if (process.env.NODE_ENV === "development") {
-    // const {
-    //   default: installExtension,
-    //   REACT_DEVELOPER_TOOLS
-    // } = require("electron-devtools-installer");
-    // await installExtension(REACT_DEVELOPER_TOOLS)
-
-    // Add react dev tools for windows
-    // BrowserWindow.addDevToolsExtension(
-    //   path.join(
-    //     os.homedir(),
-    //     "/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0"
-    //   )
-    // );
-  }
-
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -62,9 +45,9 @@ async function createWindow() {
   // mainWindow.loadURL('http://localhost:3000');
 
   // Open the DevTools.
-  if (process.env.NODE_ENV === "development") {
-    mainWindow.webContents.openDevTools();
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   mainWindow.webContents.openDevTools();
+  // }
 
   // Emitted when the window is closed.
   mainWindow.on("closed", function() {
@@ -73,6 +56,19 @@ async function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
+  if (process.env.NODE_ENV === "development") {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS
+    } = require("electron-devtools-installer");
+    installExtension(REACT_DEVELOPER_TOOLS, true)
+      .then(name => {
+        log.info(`Added Extension:  ${name}`);
+        // mainWindow.webContents.openDevTools();
+      })
+      .catch(err => log.info("An error occurred: ", err));
+  }
 }
 
 // This method will be called when Electron has finished
