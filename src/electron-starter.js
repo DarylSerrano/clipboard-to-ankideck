@@ -5,7 +5,7 @@ const url = require("url");
 // const os = require("os");
 // const faker = require("faker");
 const clipboardy = require("clipboardy");
-const { saveToFile } = require("./exporter");
+const { saveToFile } = require("./main/exporter");
 const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
 const log = require('electron-log');
 
@@ -53,7 +53,7 @@ async function createWindow() {
   const startUrl =
     process.env.ELECTRON_START_URL ||
     url.format({
-      pathname: path.join(__dirname, "/../build/index.html"),
+      pathname: path.resolve(__dirname, "..", "build", "index.html"),
       protocol: "file:",
       slashes: true
     });
