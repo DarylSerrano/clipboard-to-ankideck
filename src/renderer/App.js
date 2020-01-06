@@ -1,6 +1,6 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
-import { Button, notification, Layout } from "antd";
+import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
@@ -137,6 +137,10 @@ function App() {
           <Button onClick={exportData} icon="save">
             Save
           </Button>
+          <Comment content={
+            (<p> Path to save: {outputPath}
+              </p>)
+          }></Comment>
         </div>
       </Footer>
     </Layout>

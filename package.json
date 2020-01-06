@@ -15,7 +15,7 @@
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0"
   },
-  "productName": "Clipboard to ankideck",
+  "productName": "Clipboard-to-ankideck",
   "homepage": "./",
   "main": "src/electron-starter.js",
   "scripts": {
@@ -46,9 +46,11 @@
   },
   "devDependencies": {
     "craco": "0.0.3",
+    "del": "^5.1.0",
     "electron": "^7.1.7",
     "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^14.1.1",
-    "foreman": "^3.0.1"
+    "foreman": "^3.0.1",
+    "load-json-file": "^6.2.0"
   }
 }

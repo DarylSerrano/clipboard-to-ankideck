@@ -1,8 +1,9 @@
 const csv = require("csv");
 const path = require("path");
 const fs = require("fs");
+const log = require("electron-log");
 
-function saveToFile(filePath, data) {
+module.exports = function saveToFile(filePath, data) {
   return new Promise((resolve, reject) => {
     let savePath = path.resolve(filePath);
     const outStream = fs.createWriteStream(savePath, { flags: "w" });
@@ -13,21 +14,20 @@ function saveToFile(filePath, data) {
     });
 
     outStream.on("error", function(err) {
-      console.error(err);
+      log.error(err);
       reject(err);
     });
 
-    outStream.on("end", function() {
+    outStream.on("finish", function() {
+      log.info("writed to file" + savePath);
       resolve(savePath);
     });
 
     dataStream.on("error", function(err) {
-      console.error(err);
+      log.error(err);
       reject(err);
     });
 
     dataStream.pipe(outStream);
   });
 }
-
-module.exports.saveToFile = saveToFile;

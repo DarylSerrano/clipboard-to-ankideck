@@ -131,7 +131,9 @@ ipcMain.on(CLIPBOARD_LISTENER.STOP, (event, arg) => {
 ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, args) => {
   log.info("goind to export");
   log.info(JSON.stringify(args));
-  if (args.data.lenght > 0) {
+  log.info(args);
+  log.info("length of args " + args.clips.length);
+  if (args.clips.length > 0) {
     saveToFile(args.filepath, args.clips)
       .then(savePath => {
         // Show finished dialog
