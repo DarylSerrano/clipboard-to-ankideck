@@ -1,7 +1,7 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
 import { Button, notification, Layout } from "antd";
-import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "./events";
+import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
 // const fs = require("electron").remote.require("fs");
