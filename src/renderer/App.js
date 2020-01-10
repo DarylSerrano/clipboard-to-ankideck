@@ -1,5 +1,6 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
+import {Screenshoter} from "./components/screenshoter"
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
@@ -104,11 +105,13 @@ function App() {
           onDelete={deleteClip}
           listening={listening}
         ></ListClip>
+        <div>
+          <Screenshoter></Screenshoter>
+        </div>
       </Content>
       <Footer
         style={{
           position: "fixed",
-          zIndex: 1,
           width: "100%",
           textAlign: "center",
           bottom: 0
