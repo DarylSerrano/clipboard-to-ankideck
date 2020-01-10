@@ -1,10 +1,9 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, clipboard } = require("electron");
 const path = require("path");
 const url = require("url");
 // const os = require("os");
 // const faker = require("faker");
-const clipboardy = require("clipboardy");
 const { saveToFile } = require("./main/exporter");
 const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
 const log = require("electron-log");
@@ -92,20 +91,18 @@ app.on("activate", function() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 const timeHandler = () => {
-  clipboardy
-    .read()
-    .then(data => {
-      let clip = data.trim();
-      if (!(clip === lastClip)) {
-        log.info("sending data: " + clip);
-        mainWindow.webContents.send(CLIPBOARD_LISTENER.DATA, clip);
-        lastClip = clip;
-      }
-      timeouId = startTimer();
-    })
-    .catch(err => {
-      log.error(err);
-    });
+  try{
+    let clip = clipboard.readText();
+    clip = clip.trim();
+    if (!(clip === lastClip)) {
+      log.info("sending data: " + clip);
+      mainWindow.webContents.send(CLIPBOARD_LISTENER.DATA, clip);
+      lastClip = clip;
+    }
+    timeouId = startTimer();
+  }catch(err){
+    log.error(err)
+  }
 };
 
 function startTimer() {
