@@ -1,6 +1,7 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
-import {Screenshoter} from "./components/screenshoter"
+import { Screenshoter } from "./components/screenshoter";
+import { PicturesWall } from "./components/imageField";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
@@ -21,7 +22,7 @@ function App() {
   React.useEffect(() => {
     console.log("started listening");
     ipcRenderer.on(CLIPBOARD_LISTENER.DATA, (event, arg) => {
-      console.log("New data: " + arg)
+      console.log("New data: " + arg);
       setClips(old => [
         ...old,
         {
@@ -106,7 +107,10 @@ function App() {
           listening={listening}
         ></ListClip>
         <div>
-          <Screenshoter></Screenshoter>
+          {/* <Screenshoter></Screenshoter> */}
+        </div>
+        <div>
+          <PicturesWall></PicturesWall>
         </div>
       </Content>
       <Footer
@@ -140,10 +144,7 @@ function App() {
           <Button onClick={exportData} icon="save">
             Save
           </Button>
-          <Comment content={
-            (<p> Path to save: {outputPath}
-              </p>)
-          }></Comment>
+          <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
         </div>
       </Footer>
     </Layout>
