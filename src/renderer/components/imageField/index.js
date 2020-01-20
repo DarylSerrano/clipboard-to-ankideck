@@ -1,5 +1,5 @@
 import React from "react";
-import { Upload, Icon, Modal } from "antd";
+import { Upload, Icon, Modal, message } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
 const { Dragger } = Upload;
@@ -24,10 +24,20 @@ export class PicturesWall extends React.Component {
         status: "done",
         url: "https://cdn.awwni.me/18awg.jpg"
       }
-    ]
+    ],
+    errorUpload: false
   };
 
   handleCancel = () => this.setState({ previewVisible: false });
+
+  handleBeforeUpload = (file) => {
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      message.error('You can only upload JPG/PNG file!');
+      this.setState({errorUpload: !isJpgOrPng});
+    }
+    return isJpgOrPng;
+  }
 
   handlePreview = async file => {
     if (!file.url && !file.preview) {
@@ -40,40 +50,32 @@ export class PicturesWall extends React.Component {
     });
   };
 
-
   handleChange = async info => {
-    let fileList = [...info.fileList];
+    if(!this.errorUpload){
+      let fileList = [...info.fileList];
 
-    // 1. Limit the number of uploaded files
-    // Only to show two recent uploaded files, and old ones will be replaced by the new
-    fileList = fileList.slice(-1);
-
-    // 2. Read from response and show file link
-    fileList = fileList.map(async file => {
-        if(file.originFileObj){
-            file.url = await getBase64(file.originFileObj);
-        }
-      return file;
-    });
-
-    this.setState({ fileList });
+      // 1. Limit the number of uploaded files
+      // Only to show two recent uploaded files, and old ones will be replaced by the new
+      fileList = fileList.slice(-1);
+  
+      // 2. Read from response and show file link (really ugly hack for async map)
+      fileList = await (async () => {
+        return Promise.all(
+          fileList.map(async file => {
+            if (file.originFileObj) {
+              file.url = await getBase64(file.originFileObj);
+            }
+            return file;
+          })
+        );
+      })();
+  
+      this.setState({ fileList });
+    }else{
+      this.setState({fileList: [] ,errorUpload: false})
+    }
+    
   };
-
-// handleChange = ({ fileList }) => {
-        //   this.setState({fileList})
-    // let newFileList = fileList.slice(-2);
-
-    // // 2. Read from response and show file link
-    // newFileList = newFileList.map(file => {
-    //   if (file.response) {
-    //     // Component will show file.url as link
-    //     file.url = file.response.url;
-    //   }
-    //   return file;
-    // });
-
-    // this.setState({ newFileList });
-//   };
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
@@ -86,6 +88,7 @@ export class PicturesWall extends React.Component {
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          beforeUpload={this.handleBeforeUpload}
         >
           <p className="ant-upload-drag-icon">
             <Icon type="inbox" />
