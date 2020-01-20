@@ -1,7 +1,7 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
-import { Screenshoter } from "./components/screenshoter";
-import { PicturesWall } from "./components/imageField";
+import { Screenshoter } from "./components/clip/screenshoter";
+import { PicturesWall } from "./components/clip/imageField";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
@@ -15,7 +15,11 @@ import { ipcRenderer, remote } from "electron";
 const { Header, Footer, Content } = Layout;
 
 function App() {
-  const [clips, setClips] = React.useState([]);
+  const [clips, setClips] = React.useState([{
+    expression: "expression",
+    meaning: "meaning",
+    metadata: "metadata"
+  }]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
 
@@ -110,7 +114,7 @@ function App() {
           {/* <Screenshoter></Screenshoter> */}
         </div>
         <div>
-          <PicturesWall></PicturesWall>
+          {/* <PicturesWall></PicturesWall> */}
         </div>
       </Content>
       <Footer
