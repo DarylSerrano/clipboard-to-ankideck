@@ -15,19 +15,22 @@ function getBase64(file) {
 }
 
 export class PicturesWall extends React.Component {
-  state = {
-    previewVisible: false,
-    previewImage: "",
-    // fileList: [
-    //   {
-    //     uid: "-1",
-    //     name: "image.png",
-    //     status: "done",
-    //     url: "https://cdn.awwni.me/18awg.jpg"
-    //   }
-    // ],
-    errorUpload: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      previewVisible: false,
+      previewImage: "",
+      // fileList: [
+      //   {
+      //     uid: "-1",
+      //     name: "image.png",
+      //     status: "done",
+      //     url: "https://cdn.awwni.me/18awg.jpg"
+      //   }
+      // ],
+      errorUpload: false
+    };
+  }
 
   handleCancel = () => this.setState({ previewVisible: false });
 
@@ -71,7 +74,7 @@ export class PicturesWall extends React.Component {
         );
       })();
 
-      updateFileList(fileList)
+      updateFileList(fileList);
       // this.setState({ fileList });
     } else {
       this.setState({ errorUpload: false });
