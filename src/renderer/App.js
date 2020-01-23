@@ -16,7 +16,8 @@ function App() {
   const [clips, setClips] = React.useState([{
     expression: "expression",
     meaning: "meaning",
-    metadata: "metadata"
+    metadata: "metadata",
+    imageUrl: "imageUrl"
   }]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);

@@ -60,7 +60,8 @@ async function createWindow() {
     mainWindow = null;
   });
 
-  if (process.env.NODE_ENV === "development") {
+  // HACK FORCING REACT DEV TOOLS
+  // if (process.env.NODE_ENV === "development") {
     const {
       default: installExtension,
       REACT_DEVELOPER_TOOLS
@@ -71,7 +72,7 @@ async function createWindow() {
         // mainWindow.webContents.openDevTools();
       })
       .catch(err => log.info("An error occurred: ", err));
-  }
+  // }
 }
 
 // This method will be called when Electron has finished

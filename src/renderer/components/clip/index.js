@@ -22,6 +22,18 @@ export function Clip({ id, data, onEdit, onDelete }) {
     }
   ]);
 
+  React.useEffect(() => {
+    if(fileList.length > 0){
+      onEdit(id, {
+        expression: expression,
+        meaning: meaning,
+        metadata: metadata,
+        image: fileList[fileList.length - 1]
+      });
+    }
+    
+  }, [fileList]);
+
   function editData(e) {
     e.preventDefault();
     setEditing(currentStateEditing => !currentStateEditing);

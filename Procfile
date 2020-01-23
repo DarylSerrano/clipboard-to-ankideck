@@ -1,2 +1,2 @@
 react: npm start
-electron: node src/electron-wait-react
+electron: set NODE_ENV=development && node src/electron-wait-react

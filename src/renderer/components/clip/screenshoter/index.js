@@ -20,9 +20,10 @@ export function Screenshoter() {
     try {
       let newFile = {
         uid: String(random.int(-250, -1)),
-        name: "image.png",
+        name: windowToScreenshot.trim() + ".jpeg",
         status: "done",
-        url: dataURL
+        url: dataURL,
+        type: "image/jpeg"
       };
       let fileList = [newFile];
 

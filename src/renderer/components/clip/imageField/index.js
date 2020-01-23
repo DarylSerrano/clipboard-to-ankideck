@@ -40,7 +40,7 @@ export class PicturesWall extends React.Component {
       message.error("You can only upload JPG/PNG file!");
       this.setState({ errorUpload: !isJpgOrPng });
     }
-    return isJpgOrPng;
+    return false;
   };
 
   handlePreview = async file => {
@@ -91,7 +91,7 @@ export class PicturesWall extends React.Component {
         {({ fileList, updateFileList }) => (
           <div className="clearfix">
             <Dragger
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
               listType="picture-card"
               multiple={false}
               fileList={fileList}
