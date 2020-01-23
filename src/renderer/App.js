@@ -13,14 +13,19 @@ import { ipcRenderer, remote } from "electron";
 const { Header, Footer, Content } = Layout;
 
 function App() {
-  const [clips, setClips] = React.useState([]);
+  const [clips, setClips] = React.useState([{
+    expression: "expression",
+    meaning: "meaning",
+    metadata: "metadata",
+    imageUrl: "imageUrl"
+  }]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
 
   React.useEffect(() => {
     console.log("started listening");
     ipcRenderer.on(CLIPBOARD_LISTENER.DATA, (event, arg) => {
-      console.log("New data: " + arg)
+      console.log("New data: " + arg);
       setClips(old => [
         ...old,
         {
@@ -92,30 +97,9 @@ function App() {
   }
 
   return (
-    <Layout>
-      <Header>
-        <h1>Clipboard to anki deck</h1>
-      </Header>
-      <Content>
-        <h2>Clips</h2>
-        <ListClip
-          data={clips}
-          onEdit={editClip}
-          onDelete={deleteClip}
-          listening={listening}
-        ></ListClip>
-      </Content>
-      <Footer
-        style={{
-          position: "fixed",
-          zIndex: 1,
-          width: "100%",
-          textAlign: "center",
-          bottom: 0
-        }}
-      >
-        <div>
-          <Button
+    <Layout className="layout">
+      <Header style={{ position: 'fixed', zIndex: 1, width: '100%', bottom: 0,  textAlign: "center"}}>
+      <Button
             type="primary"
             icon="play-circle"
             onClick={startListening}
@@ -137,12 +121,23 @@ function App() {
           <Button onClick={exportData} icon="save">
             Save
           </Button>
-          <Comment content={
-            (<p> Path to save: {outputPath}
-              </p>)
-          }></Comment>
+          <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
+      </Header>
+      <Content style={{ padding: '0% 10% 10% 10%' }}>
+        <h2>Clips</h2>
+        <ListClip
+          data={clips}
+          onEdit={editClip}
+          onDelete={deleteClip}
+          listening={listening}
+        ></ListClip>
+        <div>
+          {/* <Screenshoter></Screenshoter> */}
         </div>
-      </Footer>
+        <div>
+          {/* <PicturesWall></PicturesWall> */}
+        </div>
+      </Content>
     </Layout>
   );
 }

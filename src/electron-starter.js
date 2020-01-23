@@ -5,7 +5,11 @@ const url = require("url");
 // const os = require("os");
 // const faker = require("faker");
 const { saveToFile } = require("./main/exporter");
-const { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } = require("./events");
+const {
+  CLIPBOARD_EXPORTER,
+  CLIPBOARD_LISTENER,
+  SCREENSHOTER
+} = require("./events");
 const log = require("electron-log");
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -56,7 +60,8 @@ async function createWindow() {
     mainWindow = null;
   });
 
-  if (process.env.NODE_ENV === "development") {
+  // HACK FORCING REACT DEV TOOLS
+  // if (process.env.NODE_ENV === "development") {
     const {
       default: installExtension,
       REACT_DEVELOPER_TOOLS
@@ -67,7 +72,7 @@ async function createWindow() {
         // mainWindow.webContents.openDevTools();
       })
       .catch(err => log.info("An error occurred: ", err));
-  }
+  // }
 }
 
 // This method will be called when Electron has finished
@@ -91,7 +96,7 @@ app.on("activate", function() {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 const timeHandler = () => {
-  try{
+  try {
     let clip = clipboard.readText();
     clip = clip.trim();
     if (!(clip === lastClip)) {
@@ -100,8 +105,8 @@ const timeHandler = () => {
       lastClip = clip;
     }
     timeouId = startTimer();
-  }catch(err){
-    log.error(err)
+  } catch (err) {
+    log.error(err);
   }
 };
 
@@ -145,4 +150,8 @@ ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, args) => {
         event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
       });
   }
+});
+
+ipcMain.on(SCREENSHOTER, (e, args) => {
+  mainWindow.focus();
 });
