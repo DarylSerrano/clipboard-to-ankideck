@@ -3,6 +3,8 @@ const path = require("path");
 const fs = require("fs");
 const log = require("electron-log");
 
+// TODO: Create folder paths and export images if there is some images
+
 module.exports = function saveToFile(filePath, data) {
   return new Promise((resolve, reject) => {
     let savePath = path.resolve(filePath);
