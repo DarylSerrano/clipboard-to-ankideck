@@ -1,22 +1,38 @@
 import React from "react";
-import { Card, Button, Input } from "antd";
+import { Button } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import { SelectWindow } from "./selectWindow";
 import { desktopCapturer } from "electron";
 import { SCREENSHOTER } from "../../../../events";
+import { ScreenshotContext } from "../screenshot-context";
+import random from "random";
 
 import { ipcRenderer } from "electron";
-const { Meta } = Card;
 
-// TODO: CONTEXT
-
-export function Screenshoter({ setField }) {
-  const [imgDataURL, setImgDataURL] = React.useState(
-    "https://cdn.awwni.me/18awg.jpg"
-  );
+export function Screenshoter() {
   const [windowToScreenshot, setwindowToScreenshot] = React.useState(
     "Screen 1"
   );
+
+  const screenShotCTX = React.useContext(ScreenshotContext);
+
+  const setImgDataURL = dataURL => {
+    try {
+      let newFile = {
+        uid: String(random.int(-250, -1)),
+        name: "image.png",
+        status: "done",
+        url: dataURL
+      };
+      let fileList = [newFile];
+
+      screenShotCTX.updateFileList(fileList);
+      // this.setState({ fileList });
+    } catch (err) {
+      console.log("Error");
+      console.log(err);
+    }
+  };
 
   const [modalVisible, setModalVisible] = React.useState(false);
   const [windowsToSelect, setWindowsToSelect] = React.useState([]);
@@ -61,6 +77,7 @@ export function Screenshoter({ setField }) {
       // Draw video on canvas
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+      // setImgDataURL(canvas.toDataURL("image/jpeg"));
       setImgDataURL(canvas.toDataURL("image/jpeg"));
       // Remove hidden video tag
       video.remove();
@@ -107,16 +124,7 @@ export function Screenshoter({ setField }) {
   };
 
   return (
-    <Card
-      style={{ width: 300 }}
-      cover={
-        <img
-          alt="example"
-          src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-        />
-      }
-    >
-      <Meta title="Card title" description="This is the description" />
+    <>
       <Button onClick={showModal}>Select window</Button>
       <Button onClick={takeScreenshot}>Make screenshot</Button>
       <SelectWindow
@@ -125,8 +133,6 @@ export function Screenshoter({ setField }) {
         oKButton={oKButton}
         cancelButton={cancelButton}
       ></SelectWindow>
-      <p>Window selected: {windowToScreenshot}</p>
-      <img src={imgDataURL} alt="screenshot"></img>
-    </Card>
+    </>
   );
 }

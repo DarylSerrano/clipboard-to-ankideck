@@ -1,7 +1,5 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
-import { Screenshoter } from "./components/clip/screenshoter";
-import { PicturesWall } from "./components/clip/imageField";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
@@ -98,35 +96,9 @@ function App() {
   }
 
   return (
-    <Layout>
-      <Header>
-        <h1>Clipboard to anki deck</h1>
-      </Header>
-      <Content>
-        <h2>Clips</h2>
-        <ListClip
-          data={clips}
-          onEdit={editClip}
-          onDelete={deleteClip}
-          listening={listening}
-        ></ListClip>
-        <div>
-          {/* <Screenshoter></Screenshoter> */}
-        </div>
-        <div>
-          {/* <PicturesWall></PicturesWall> */}
-        </div>
-      </Content>
-      <Footer
-        style={{
-          position: "fixed",
-          width: "100%",
-          textAlign: "center",
-          bottom: 0
-        }}
-      >
-        <div>
-          <Button
+    <Layout className="layout">
+      <Header style={{ position: 'fixed', zIndex: 1, width: '100%', bottom: 0,  textAlign: "center"}}>
+      <Button
             type="primary"
             icon="play-circle"
             onClick={startListening}
@@ -149,8 +121,22 @@ function App() {
             Save
           </Button>
           <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
+      </Header>
+      <Content style={{ padding: '0% 10% 10% 10%' }}>
+        <h2>Clips</h2>
+        <ListClip
+          data={clips}
+          onEdit={editClip}
+          onDelete={deleteClip}
+          listening={listening}
+        ></ListClip>
+        <div>
+          {/* <Screenshoter></Screenshoter> */}
         </div>
-      </Footer>
+        <div>
+          {/* <PicturesWall></PicturesWall> */}
+        </div>
+      </Content>
     </Layout>
   );
 }

@@ -86,11 +86,11 @@ export function Clip({ id, data, onEdit, onDelete }) {
           value={metadata}
         ></Input>
       </Input.Group>
-      <ScreenshotContext.Provider value={{fileList: fileList, updateFileList: setFileList}}>
-        <Card type="inner" title="Inner Card title">
-          <PicturesWall></PicturesWall>
-          <Screenshoter></Screenshoter>
-        </Card>
+      <ScreenshotContext.Provider
+        value={{ fileList: fileList, updateFileList: setFileList }}
+      >
+        <PicturesWall></PicturesWall>
+        <Screenshoter></Screenshoter>
       </ScreenshotContext.Provider>
     </Card>
   );
