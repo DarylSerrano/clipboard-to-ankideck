@@ -3,6 +3,7 @@ import { ListClip } from "./components/listClips";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
+import {AudioRecorder} from "./components/clip/audioRecorder"
 
 // const fs = require("electron").remote.require("fs");
 
@@ -136,6 +137,9 @@ function App() {
           onDelete={deleteClip}
           listening={listening}
         ></ListClip>
+        <div>
+          <AudioRecorder></AudioRecorder>
+        </div>
         <div>
           {/* <Screenshoter></Screenshoter> */}
         </div>
