@@ -43,16 +43,21 @@ function App() {
 
   async function getOutPath(e) {
     e.preventDefault();
-    let saveDialogResult = await remote.dialog.showSaveDialog({
-      title: "Select save path",
-      defaultPath: "clips.tsv",
+    let homePath = remote.require("os").homedir();
+    let saveDialogResult = await remote.dialog.showOpenDialog({
+      title: "Select folder to save the deck",
+      defaultPath: homePath,
       filters: [
-        { name: "Anki .tsv", extensions: ["tsv"] },
+        // { name: "Anki .tsv", extensions: ["tsv"] },
         { name: "All Files", extensions: ["*"] }
-      ]
+      ],
+      properties: ["openDirectory", "createDirectory", "promptToCreate"]
     });
+
+    // setOutPuthPath(JSON.stringify(saveDialogResult)); 
     if (!saveDialogResult.canceled) {
-      setOutPuthPath(saveDialogResult.filePath);
+      let firstPath = [...saveDialogResult.filePaths].pop();
+      setOutPuthPath(firstPath);
     }
   }
 
