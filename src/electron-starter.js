@@ -11,6 +11,7 @@ const {
   SCREENSHOTER
 } = require("./events");
 const log = require("electron-log");
+const isDev = require("electron-is-dev");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -62,6 +63,7 @@ async function createWindow() {
 
   // HACK FORCING REACT DEV TOOLS
   // if (process.env.NODE_ENV === "development") {
+  if (isDev) {
     const {
       default: installExtension,
       REACT_DEVELOPER_TOOLS
@@ -72,6 +74,7 @@ async function createWindow() {
         // mainWindow.webContents.openDevTools();
       })
       .catch(err => log.info("An error occurred: ", err));
+  }
   // }
 }
 
@@ -148,6 +151,7 @@ ipcMain.on(CLIPBOARD_EXPORTER.EXPORT, (event, args) => {
       .catch(err => {
         log.error(err);
         event.reply(CLIPBOARD_EXPORTER.EXPORT_FINISHED, false);
+        dialog.showErrorBox("Error exporting", `${err}`);
       });
   }
 });
