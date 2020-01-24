@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^7.2.1",
     "antd": "^3.26.7",
     "csv": "^5.3.1",
+    "data-uri-to-buffer": "^3.0.0",
     "electron-log": "^4.0.4",
     "faker": "^4.1.0",
     "prop-types": "^15.7.2",
