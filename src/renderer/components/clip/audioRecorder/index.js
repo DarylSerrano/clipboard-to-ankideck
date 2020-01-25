@@ -1,119 +1,94 @@
 import React from "react";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import { desktopCapturer } from "electron";
 import { SCREENSHOTER } from "../../../../events";
 import random from "random";
+import AudioPlayer  from "react-h5-audio-player";
+import 'react-h5-audio-player/lib/styles.css';
 
 // import { ipcRenderer } from "electron";
 
 export function AudioRecorder() {
   const [windowToScreenshot, setwindowToScreenshot] = React.useState(
-    "Screen 1"
+    "Entire Screen"
   );
   const [recording, setRecording] = React.useState(false);
-    const [audioStream, setAudioStream] = React.useState(<p></p>);
 
-  //   const setImgDataURL = dataURL => {
-  //     try {
-  //       let newFile = {
-  //         uid: String(random.int(-250, -1)),
-  //         name: windowToScreenshot.trim() + ".jpeg",
-  //         status: "done",
-  //         url: dataURL,
-  //         type: "image/jpeg"
-  //       };
-  //       let fileList = [newFile];
+  const [mediaRecorder, setMediaRecorder] = React.useState({});
+  const [chunks, setChunks] = React.useState([]);
+  const [audioURL, setAudioURL] = React.useState("");
 
-  //       screenShotCTX.updateFileList(fileList);
-  //       // this.setState({ fileList });
-  //     } catch (err) {
-  //       console.log("Error");
-  //       console.log(err);
-  //     }
-  //   };
-
-  //   const [modalVisible, setModalVisible] = React.useState(false);
-  const [windowsToSelect, setWindowsToSelect] = React.useState([]);
-
-  //   const handleStream = stream => {
-  //     const video = document.createElement("video");
-  //     video.onloadedmetadata = e => {
-  //       // Set video ORIGINAL height (screenshot)
-  //       video.style.height = video.videoHeight + "px"; // videoHeight
-  //       video.style.width = video.videoWidth + "px"; // videoWidth
-
-  //       video.play();
-
-  //       // Create canvas
-  //       var canvas = document.createElement("canvas");
-  //       canvas.width = video.videoWidth;
-  //       canvas.height = video.videoHeight;
-  //       var ctx = canvas.getContext("2d");
-  //       // Draw video on canvas
-  //       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  //       // setImgDataURL(canvas.toDataURL("image/jpeg"));
-  //       setImgDataURL(canvas.toDataURL("image/jpeg"));
-  //       // Remove hidden video tag
-  //       video.remove();
-  //       try {
-  //         // Destroy connect to stream
-  //         stream.getTracks()[0].stop();
-  //       } catch (e) {}
-
-  //       // Restore Focus
-  //       ipcRenderer.send(SCREENSHOTER.SCREENSHOT_FINISHED);
-  //     };
-  //     video.srcObject = stream;
-  //   };
+  const stopRecording = () => {
+    mediaRecorder.stop();
+    setRecording(false);
+  };
 
   const handleStream = stream => {
-    const audio = document.createElement("audio");
-    audio.srcObject = stream;
-    audio.autoplay = true;
-      setRecording(true);
-      setAudioStream(audio)
-}
+    const mediaRecorder = new MediaRecorder(stream);
+    setMediaRecorder(mediaRecorder);
+    mediaRecorder.start();
 
-  const takeScreenshot = e => {
+    mediaRecorder.ondataavailable = function(e) {
+      chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = function(e) {
+      // const audio = <audio controls src={}></audio>;
+      // const audio = document.createElement('audio');
+      // audio.controls = true;
+      const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob); 
+      reader.onloadend = function() {
+        let base64 = reader.result;
+        // base64 = base64.split(',')[1];
+        console.log(base64);
+     }
+      const audioURL = window.URL.createObjectURL(blob);
+      setAudioURL(audioURL);
+      setChunks([]);
+    };
+  };
+
+  const takeScreenshot = async  e => {
     e.preventDefault();
-    desktopCapturer
-      .getSources({ types: ["window", "screen"] })
-      .then(async sources => {
-        for (const source of sources) {
-          setWindowsToSelect(old => [...old, source.name]);
-          if (source.name === windowToScreenshot) {
-            try {
-              const stream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                  mandatory: {
-                    chromeMediaSource: "desktop"
-                  }
-                },
-                video: false
-              });
-                handleStream(stream);
-            } catch (e) {
-              console.log(e);
-            }
-            return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          mandatory: {
+            chromeMediaSource: "desktop"
+          }
+        },
+        video: {
+          mandatory: {
+            chromeMediaSource: "desktop"
           }
         }
       });
+      handleStream(stream);
+    } catch (e) {
+      message.error("Can't record audio");
+      console.log(e);
+    }
   };
 
   return (
     <>
-      <Button onClick={takeScreenshot}>recording</Button>
-      <Button onClick={() => {setRecording(false); audioStream.pause();}}>Stop recording</Button>
-      {windowsToSelect.map(name => (
-        <p>{name}</p>
-      ))}
+      <Button onClick={takeScreenshot}>
+        Record source: {windowToScreenshot}
+      </Button>
+      <Button
+        onClick={() => {
+          stopRecording();
+        }}
+      >
+        Stop recording
+      </Button>
       {/* <audio ref={audioRef => }></audio> */}
-      {
-          recording ? audioStream : <></>
-      }
+      {/* {recording ? audioStream : <></>} */}
+      {/* {audioURL.length > 0 ? <audio controls src={audioURL}></audio> : <p></p>} */}
+      {audioURL.length > 0 ? <AudioPlayer src={audioURL}></AudioPlayer> : <p></p>}
     </>
   );
 }
