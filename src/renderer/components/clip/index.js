@@ -5,7 +5,7 @@ import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import { PicturesWall } from "./imageField";
 import { Screenshoter } from "./screenshoter";
 import { ScreenshotContext } from "./screenshot-context";
-import {AudioRecorder} from "./audioRecorder";
+import { AudioRecorder } from "./audioRecorder";
 
 const { TextArea } = Input;
 
@@ -25,7 +25,7 @@ export function Clip({ id, data, onEdit, onDelete }) {
   const [audioDataURL, setAudioDataURL] = React.useState("");
 
   React.useEffect(() => {
-    if(fileList.length > 0){
+    if (fileList.length > 0) {
       onEdit(id, {
         expression: expression,
         meaning: meaning,
@@ -34,7 +34,6 @@ export function Clip({ id, data, onEdit, onDelete }) {
         audio: audioDataURL
       });
     }
-    
   }, [fileList, audioDataURL]);
 
   function editData(e) {
@@ -101,13 +100,17 @@ export function Clip({ id, data, onEdit, onDelete }) {
           value={metadata}
         ></Input>
       </Input.Group>
-      <ScreenshotContext.Provider
-        value={{ fileList: fileList, updateFileList: setFileList }}
-      >
-        <PicturesWall></PicturesWall>
-        <Screenshoter></Screenshoter>
-      </ScreenshotContext.Provider>
-      <AudioRecorder setAudioDataURL={setAudioDataURL}></AudioRecorder>
+      <Card type="inner" title="Screenshot">
+        <ScreenshotContext.Provider
+          value={{ fileList: fileList, updateFileList: setFileList }}
+        >
+          <PicturesWall></PicturesWall>
+          <Screenshoter></Screenshoter>
+        </ScreenshotContext.Provider>
+      </Card>
+      <Card type="inner" title="Screenshot">
+        <AudioRecorder setAudioDataURL={setAudioDataURL}></AudioRecorder>
+      </Card>
     </Card>
   );
 }
