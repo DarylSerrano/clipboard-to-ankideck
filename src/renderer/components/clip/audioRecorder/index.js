@@ -1,23 +1,20 @@
 import React from "react";
-import { Button, message } from "antd";
+import { Button, message, Card } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
-import { desktopCapturer } from "electron";
-import { SCREENSHOTER } from "../../../../events";
-import random from "random";
-import AudioPlayer  from "react-h5-audio-player";
-import 'react-h5-audio-player/lib/styles.css';
+import AudioPlayer from "react-h5-audio-player";
+import "react-h5-audio-player/lib/styles.css";
 
 // import { ipcRenderer } from "electron";
 
-export function AudioRecorder() {
-  const [windowToScreenshot, setwindowToScreenshot] = React.useState(
-    "Entire Screen"
-  );
+export function AudioRecorder({ setAudioDataURL }) {
   const [recording, setRecording] = React.useState(false);
-
   const [mediaRecorder, setMediaRecorder] = React.useState({});
   const [chunks, setChunks] = React.useState([]);
   const [audioURL, setAudioURL] = React.useState("");
+
+  const updateAudioURL = base64String => {
+    setAudioDataURL(base64String);
+  };
 
   const stopRecording = () => {
     mediaRecorder.stop();
@@ -39,19 +36,20 @@ export function AudioRecorder() {
       // audio.controls = true;
       const blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
       const reader = new FileReader();
-      reader.readAsDataURL(blob); 
+      reader.readAsDataURL(blob);
       reader.onloadend = function() {
         let base64 = reader.result;
         // base64 = base64.split(',')[1];
         console.log(base64);
-     }
+        updateAudioURL(base64);
+      };
       const audioURL = window.URL.createObjectURL(blob);
       setAudioURL(audioURL);
       setChunks([]);
     };
   };
 
-  const takeScreenshot = async  e => {
+  const takeScreenshot = async e => {
     e.preventDefault();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -74,21 +72,16 @@ export function AudioRecorder() {
   };
 
   return (
-    <>
-      <Button onClick={takeScreenshot}>
-        Record source: {windowToScreenshot}
-      </Button>
+    <Card>
+      <Button onClick={takeScreenshot}>Record Audio</Button>
       <Button
         onClick={() => {
           stopRecording();
         }}
       >
-        Stop recording
+        Stop recording audio
       </Button>
-      {/* <audio ref={audioRef => }></audio> */}
-      {/* {recording ? audioStream : <></>} */}
-      {/* {audioURL.length > 0 ? <audio controls src={audioURL}></audio> : <p></p>} */}
-      {audioURL.length > 0 ? <AudioPlayer src={audioURL}></AudioPlayer> : <p></p>}
-    </>
+      {audioURL.length > 0 ? <AudioPlayer src={audioURL}></AudioPlayer> : <></>}
+    </Card>
   );
 }

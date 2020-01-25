@@ -3,7 +3,6 @@ import { ListClip } from "./components/listClips";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
-import {AudioRecorder} from "./components/clip/audioRecorder"
 
 // const fs = require("electron").remote.require("fs");
 
@@ -18,7 +17,8 @@ function App() {
     expression: "expression",
     meaning: "meaning",
     metadata: "metadata",
-    imageUrl: "imageUrl"
+    imageUrl: "imageUrl",
+    audioURL: "audioURL"
   }]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
@@ -138,7 +138,7 @@ function App() {
           listening={listening}
         ></ListClip>
         <div>
-          <AudioRecorder></AudioRecorder>
+          {/* <AudioRecorder></AudioRecorder> */}
         </div>
         <div>
           {/* <Screenshoter></Screenshoter> */}

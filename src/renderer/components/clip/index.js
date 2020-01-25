@@ -5,6 +5,7 @@ import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import { PicturesWall } from "./imageField";
 import { Screenshoter } from "./screenshoter";
 import { ScreenshotContext } from "./screenshot-context";
+import {AudioRecorder} from "./audioRecorder";
 
 const { TextArea } = Input;
 
@@ -21,6 +22,7 @@ export function Clip({ id, data, onEdit, onDelete }) {
       url: "https://cdn.awwni.me/18awg.jpg"
     }
   ]);
+  const [audioDataURL, setAudioDataURL] = React.useState("");
 
   React.useEffect(() => {
     if(fileList.length > 0){
@@ -28,11 +30,12 @@ export function Clip({ id, data, onEdit, onDelete }) {
         expression: expression,
         meaning: meaning,
         metadata: metadata,
-        image: fileList[fileList.length - 1]
+        image: fileList[fileList.length - 1],
+        audio: audioDataURL
       });
     }
     
-  }, [fileList]);
+  }, [fileList, audioDataURL]);
 
   function editData(e) {
     e.preventDefault();
@@ -104,6 +107,7 @@ export function Clip({ id, data, onEdit, onDelete }) {
         <PicturesWall></PicturesWall>
         <Screenshoter></Screenshoter>
       </ScreenshotContext.Provider>
+      <AudioRecorder setAudioDataURL={setAudioDataURL}></AudioRecorder>
     </Card>
   );
 }
