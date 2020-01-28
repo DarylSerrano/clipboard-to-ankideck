@@ -22,6 +22,10 @@ const deleteProgramContents = async () => {
     let pathApp = path.resolve(homedir, "AppData", "Roaming", appName);
     const deletedPaths = await del(pathApp, { force: true });
     console.log(`Deleted app folder: ${deletedPaths}`);
+  }else if(platform === "linux") {
+    let pathApp = path.resolve(homedir, ".config", appName);
+    const deletedPaths = await del(pathApp, { force: true });
+    console.log(`Deleted app folder: ${deletedPaths}`);
   }
 };
 

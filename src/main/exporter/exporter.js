@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const log = require("electron-log");
 const saveDataURIToFile = require("./imageExporter");
+const moment = require("moment");
 
 // TODO: Create folder paths and export images if there is some images
 
@@ -25,17 +26,23 @@ const saveDataURIToFile = require("./imageExporter");
         },
         "url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gxYSUNDX1BST0ZJTEUAAQEA"
       }
-    }]
+    }],
+    audio: "dataURL"
   }
 }
 */
 
-async function saveImageAndReturnClips(folderPath, clips) {
+async function saveMediaAndReturnClips(folderPath, clips) {
   let newClips = [];
   for (let i = 0; i < clips.length; i++) {
     let imageFilename = await saveDataURIToFile(folderPath, clips[i].image);
+    let soundFilename = moment().unix() + ".opus";
+    let soundFile = { url: clips[i].audio, name: soundFilename };
+    await saveDataURIToFile(folderPath, soundFile);
+
     let clip = { ...clips[i] };
     clip.image = `<img src='${imageFilename}'>`;
+    clip.audio = `[${soundFilename}];`;
     newClips.push(clip);
   }
 
@@ -43,8 +50,13 @@ async function saveImageAndReturnClips(folderPath, clips) {
 }
 
 module.exports = async function saveToFile(folderPath, data) {
-  await fs.promises.mkdir(path.resolve(folderPath, "media"), { recursive: true });
-  let ankiDeckData = await saveImageAndReturnClips(path.resolve(folderPath, "media"), data);
+  await fs.promises.mkdir(path.resolve(folderPath, "media"), {
+    recursive: true
+  });
+  let ankiDeckData = await saveMediaAndReturnClips(
+    path.resolve(folderPath, "media"),
+    data
+  );
 
   return new Promise((resolve, reject) => {
     let savePath = path.resolve(folderPath);
@@ -53,7 +65,7 @@ module.exports = async function saveToFile(folderPath, data) {
     });
     let dataStream = csv.stringify(ankiDeckData, {
       delimiter: "\t",
-      columns: ["expression", "meaning", "metadata", "image"],
+      columns: ["expression", "meaning", "metadata", "image", "audio"],
       header: false,
       cast: {
         string: function(value) {
