@@ -3,7 +3,7 @@ const fs = require("fs");
 const dataUriToBuffer = require("data-uri-to-buffer");
 const log = require("electron-log");
 
-//TODO:
+//TODO: Rename files
 // Get image dataURL, and save to filepath
 // {name: "test.jpeg", url: imageUrl}
 

@@ -17,7 +17,8 @@ function App() {
     expression: "expression",
     meaning: "meaning",
     metadata: "metadata",
-    imageUrl: "imageUrl"
+    imageUrl: "imageUrl",
+    audioURL: "audioURL"
   }]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
@@ -136,6 +137,9 @@ function App() {
           onDelete={deleteClip}
           listening={listening}
         ></ListClip>
+        <div>
+          {/* <AudioRecorder></AudioRecorder> */}
+        </div>
         <div>
           {/* <Screenshoter></Screenshoter> */}
         </div>
