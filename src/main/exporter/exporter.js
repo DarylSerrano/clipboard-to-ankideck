@@ -2,7 +2,7 @@ const csv = require("csv");
 const path = require("path");
 const fs = require("fs");
 const log = require("electron-log");
-const saveDataURIToFile = require("./imageExporter");
+const saveDataURIToFile = require("./mediaExporter");
 const moment = require("moment");
 
 // TODO: Create folder paths and export images if there is some images
@@ -50,13 +50,11 @@ async function saveMediaAndReturnClips(folderPath, clips) {
 }
 
 module.exports = async function saveToFile(folderPath, data) {
-  await fs.promises.mkdir(path.resolve(folderPath, "media"), {
+  let mediaCollectionPath = path.resolve(folderPath, "media.collection");
+  await fs.promises.mkdir(mediaCollectionPath, {
     recursive: true
   });
-  let ankiDeckData = await saveMediaAndReturnClips(
-    path.resolve(folderPath, "media"),
-    data
-  );
+  let ankiDeckData = await saveMediaAndReturnClips(mediaCollectionPath, data);
 
   return new Promise((resolve, reject) => {
     let savePath = path.resolve(folderPath);
