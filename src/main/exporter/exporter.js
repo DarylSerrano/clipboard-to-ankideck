@@ -42,7 +42,7 @@ async function saveMediaAndReturnClips(folderPath, clips) {
 
     let clip = { ...clips[i] };
     clip.image = `<img src='${imageFilename}'>`;
-    clip.audio = `[${soundFilename}];`;
+    clip.audio = `[${soundFilename}]`;
     newClips.push(clip);
   }
 
