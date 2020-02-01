@@ -6,7 +6,6 @@ import { visualize } from "./visualizer";
 import "../../../css/audioRecorder.css";
 import "react-h5-audio-player/lib/styles.css";
 
-// import { ipcRenderer } from "electron";
 
 export function AudioRecorder({ setAudioDataURL }) {
   const [recording, setRecording] = React.useState(false);
