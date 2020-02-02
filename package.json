@@ -25,7 +25,9 @@
     "source-map-support": "^0.5.12"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
+    "@types/electron-devtools-installer": "^2.2.0",
     "@types/faker": "^4.1.9",
     "@types/node": "^13.7.0",
     "@types/random": "^2.1.0",

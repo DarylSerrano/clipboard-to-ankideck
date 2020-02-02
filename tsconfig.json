@@ -1,6 +1,11 @@
 {
     "extends": "./node_modules/electron-webpack/tsconfig-base.json",
     "compilerOptions": {
-        "jsx": "react"
+        "jsx": "react",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "es6",
     }
 }

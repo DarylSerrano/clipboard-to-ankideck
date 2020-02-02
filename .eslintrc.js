@@ -14,6 +14,7 @@ module.exports = {
     __static: true
   },
   rules: {
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      "no-undef": "off"
   }
 };
