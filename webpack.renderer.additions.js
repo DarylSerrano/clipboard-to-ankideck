@@ -3,6 +3,7 @@ module.exports = {
     rules: [
       {
         loader: "babel-loader",
+        test: /\.jsx?$/,
         options: {
           presets: ["@babel/react"]
         }
@@ -10,6 +11,6 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"]
+    extensions: [".js", ".jsx"]
   }
 };

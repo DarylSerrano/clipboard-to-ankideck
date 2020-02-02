@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import { SelectWindow } from "./selectWindow";
 import { desktopCapturer } from "electron";
@@ -85,7 +85,10 @@ export function Screenshoter() {
       try {
         // Destroy connect to stream
         stream.getTracks()[0].stop();
-      } catch (e) {}
+      } catch (e) {
+        message.error("Error: " + e);
+        console.log("error: " + e);
+      }
 
       // Restore Focus
       ipcRenderer.send(SCREENSHOTER.SCREENSHOT_FINISHED);

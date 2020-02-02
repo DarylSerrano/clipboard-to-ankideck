@@ -26,6 +26,7 @@
     "source-map-support": "^0.5.12"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -41,12 +42,16 @@
     "electron-webpack-eslint": "^5.0.1",
     "electron-webpack-ts": "^3.2.0",
     "react-h5-audio-player": "^2.3.0",
+    "ts-loader": "^6.2.1",
     "typescript": "^3.7.5",
     "webpack": "~4.41.5"
   },
   "electronWebpack": {
     "renderer": {
       "webpackConfig": "webpack.renderer.additions.js"
+    },
+    "main": {
+      "webpackConfig": "webpack.main.config.js"
     }
   }
 }
