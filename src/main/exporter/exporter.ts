@@ -1,4 +1,4 @@
-import csv from "csv";
+import stringify from "csv-stringify"
 import fs from "fs";
 import path from "path";
 import log from "electron-log";
@@ -86,7 +86,7 @@ export async function saveToFile(folderPath: string, data: Array<ClipReceived>) 
     const outStream = fs.createWriteStream(path.resolve(savePath, "deck.tsv"), {
       flags: "w"
     });
-    let dataStream = csv.stringify(ankiDeckData, {
+    let dataStream = stringify(ankiDeckData, {
       delimiter: "\t",
       columns: ["expression", "meaning", "metadata", "image", "audio"],
       header: false,

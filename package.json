@@ -13,6 +13,7 @@
   "dependencies": {
     "antd": "^3.26.7",
     "csv": "^5.3.1",
+    "csv-stringify": "^5.3.6",
     "data-uri-to-buffer": "^3.0.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^4.0.4",
