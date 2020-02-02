@@ -2,10 +2,15 @@
   "name": "clipboard-to-ankideck",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "postinstall": "electron-builder install-app-deps"
+  },
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
     "antd": "^3.26.7",
     "csv": "^5.3.1",
     "data-uri-to-buffer": "^3.0.0",
@@ -17,46 +22,28 @@
     "random": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-h5-audio-player": "^2.3.0",
-    "react-scripts": "3.3.0"
-  },
-  "productName": "Clipboard-to-ankideck",
-  "homepage": "./",
-  "main": "src/electron-starter.js",
-  "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "build:package": "electron-packager .",
-    "test": "craco test",
-    "eject": "react-scripts eject",
-    "electron": "electron .",
-    "electron:dev": "electron .",
-    "dev": "set NODE_ENV=development && nf start",
-    "dev:production": "npm run build && npm run electron",
-    "electron-dev:win": "set ELECTRON_START_URL=http://localhost:3000 && electron ."
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "source-map-support": "^0.5.12"
   },
   "devDependencies": {
-    "craco": "0.0.3",
-    "del": "^5.1.0",
-    "electron": "^7.1.10",
-    "electron-devtools-installer": "^2.2.4",
-    "electron-packager": "^14.2.0",
-    "foreman": "^3.0.1",
-    "load-json-file": "^6.2.0"
+    "@babel/preset-react": "^7.8.3",
+    "@types/faker": "^4.1.9",
+    "@types/node": "^13.7.0",
+    "@types/random": "^2.1.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "babel-eslint": "^10.0.3",
+    "electron": "5.0.6",
+    "electron-builder": "^22.2.0",
+    "electron-webpack": "^2.7.4",
+    "electron-webpack-eslint": "^5.0.1",
+    "electron-webpack-ts": "^3.2.0",
+    "react-h5-audio-player": "^2.3.0",
+    "typescript": "^3.7.5",
+    "webpack": "~4.35.3"
+  },
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "webpack.renderer.additions.js"
+    }
   }
 }
