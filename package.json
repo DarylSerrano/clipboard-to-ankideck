@@ -26,7 +26,6 @@
     "source-map-support": "^0.5.12"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "@types/electron-devtools-installer": "^2.2.0",
