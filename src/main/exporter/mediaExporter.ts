@@ -1,13 +1,18 @@
-const path = require("path");
-const fs = require("fs");
-const dataUriToBuffer = require("data-uri-to-buffer");
-const log = require("electron-log");
+import path from "path";
+import fs from "fs";
+import log from "electron-log";
+import dataUriToBuffer from "data-uri-to-buffer"
 
 //TODO: Rename files
 // Get image dataURL, and save to filepath
 // {name: "test.jpeg", url: imageUrl}
 
-module.exports = function saveDataURIToFile(savePath, file) {
+export interface DataURIFile {
+  name: string;
+  url: string;
+}
+
+export function saveDataURIToFile(savePath: string, file: DataURIFile) {
   return new Promise((resolve, reject) => {
     let imageFilename = file.name;
     let imageSavePath = path.resolve(savePath, imageFilename);
@@ -27,4 +32,4 @@ module.exports = function saveDataURIToFile(savePath, file) {
     outStream.write(decoded);
     outStream.end();
   });
-};
+}

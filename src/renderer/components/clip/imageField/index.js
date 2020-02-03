@@ -32,18 +32,20 @@ export class PicturesWall extends React.Component {
     };
   }
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  handleCancel(){
+    this.setState({ previewVisible: false });
+  }
 
-  handleBeforeUpload = file => {
+  handleBeforeUpload(file){
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG file!");
       this.setState({ errorUpload: !isJpgOrPng });
     }
     return false;
-  };
+  }
 
-  handlePreview = async file => {
+  async handlePreview(file){
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -52,9 +54,9 @@ export class PicturesWall extends React.Component {
       previewImage: file.url || file.preview,
       previewVisible: true
     });
-  };
+  }
 
-  handleChange = async (info, updateFileList) => {
+  async handleChange(info, updateFileList){
     if (!this.errorUpload) {
       let fileList = [...info.fileList];
 
@@ -81,7 +83,7 @@ export class PicturesWall extends React.Component {
       updateFileList([]);
       // this.setState({ fileList: [], errorUpload: false });
     }
-  };
+  }
 
   render() {
     // const { previewVisible, previewImage, fileList } = this.state;
@@ -95,11 +97,11 @@ export class PicturesWall extends React.Component {
               listType="picture-card"
               multiple={false}
               fileList={fileList}
-              onPreview={this.handlePreview}
+              onPreview={(file) => this.handlePreview(file)}
               onChange={async info => {
                 await this.handleChange(info, updateFileList);
               }}
-              beforeUpload={this.handleBeforeUpload}
+              beforeUpload={(file) => this.handleBeforeUpload(file)}
             >
               <p className="ant-upload-drag-icon">
                 <Icon type="inbox" />
@@ -115,7 +117,7 @@ export class PicturesWall extends React.Component {
             <Modal
               visible={previewVisible}
               footer={null}
-              onCancel={this.handleCancel}
+              onCancel={(e) => this.handleCancel(e)}
             >
               <img alt="example" style={{ width: "100%" }} src={previewImage} />
             </Modal>

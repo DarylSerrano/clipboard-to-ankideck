@@ -1,9 +1,9 @@
-const csv = require("csv");
-const path = require("path");
-const fs = require("fs");
-const log = require("electron-log");
-const saveDataURIToFile = require("./mediaExporter");
-const moment = require("moment");
+import stringify from "csv-stringify"
+import fs from "fs";
+import path from "path";
+import log from "electron-log";
+import moment from "moment";
+import {saveDataURIToFile} from "./mediaExporter";
 
 // TODO: Create folder paths and export images if there is some images
 
@@ -32,7 +32,28 @@ const moment = require("moment");
 }
 */
 
-async function saveMediaAndReturnClips(folderPath, clips) {
+interface Clip {
+  expression: string;
+  meaning: string;
+  metadata: string;
+  audio: string;
+}
+
+export interface ClipToExport extends Clip {
+  image: string;
+}
+
+export interface ClipReceived extends Clip {
+  image: {
+    name: string;
+    url: string;
+  };
+}
+
+async function saveMediaAndReturnClips(
+  folderPath: string,
+  clips: Array<ClipReceived>
+) {
   let newClips = [];
   for (let i = 0; i < clips.length; i++) {
     let imageFilename = await saveDataURIToFile(folderPath, clips[i].image);
@@ -40,16 +61,20 @@ async function saveMediaAndReturnClips(folderPath, clips) {
     let soundFile = { url: clips[i].audio, name: soundFilename };
     await saveDataURIToFile(folderPath, soundFile);
 
-    let clip = { ...clips[i] };
-    clip.image = `<img src='${imageFilename}'>`;
-    clip.audio = `[${soundFilename}]`;
+    let clip: ClipToExport = {
+      expression: clips[i].expression,
+      image: `<img src='${imageFilename}'>`,
+      audio: `[${soundFilename}]`,
+      meaning: clips[i].meaning,
+      metadata: clips[i].metadata
+    };
     newClips.push(clip);
   }
 
   return newClips;
 }
 
-module.exports = async function saveToFile(folderPath, data) {
+export async function saveToFile(folderPath: string, data: Array<ClipReceived>) {
   let mediaCollectionPath = path.resolve(folderPath, "media.collection");
   await fs.promises.mkdir(mediaCollectionPath, {
     recursive: true
@@ -61,7 +86,7 @@ module.exports = async function saveToFile(folderPath, data) {
     const outStream = fs.createWriteStream(path.resolve(savePath, "deck.tsv"), {
       flags: "w"
     });
-    let dataStream = csv.stringify(ankiDeckData, {
+    let dataStream = stringify(ankiDeckData, {
       delimiter: "\t",
       columns: ["expression", "meaning", "metadata", "image", "audio"],
       header: false,
@@ -89,4 +114,4 @@ module.exports = async function saveToFile(folderPath, data) {
 
     dataStream.pipe(outStream);
   });
-};
+}
