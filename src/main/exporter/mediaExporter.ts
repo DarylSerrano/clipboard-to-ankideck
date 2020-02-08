@@ -12,7 +12,7 @@ export interface DataURIFile {
   url: string;
 }
 
-export function saveDataURIToFile(savePath: string, file: DataURIFile) {
+export function saveDataURIToFile(savePath: string, file: DataURIFile): Promise<string> {
   return new Promise((resolve, reject) => {
     let imageFilename = file.name;
     let imageSavePath = path.resolve(savePath, imageFilename);
