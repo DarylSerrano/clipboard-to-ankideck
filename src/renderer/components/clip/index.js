@@ -38,6 +38,17 @@ export function Clip({ id, data, onEdit, onDelete }) {
 
   function editData(e) {
     e.preventDefault();
+
+    if (editing) {
+      onEdit(id, {
+        expression: expression,
+        meaning: meaning,
+        metadata: metadata,
+        image: fileList[fileList.length - 1],
+        audio: audioDataURL
+      });
+    }
+
     setEditing(currentStateEditing => !currentStateEditing);
   }
 
@@ -58,20 +69,7 @@ export function Clip({ id, data, onEdit, onDelete }) {
       title={`Clip ${id}`}
       actions={[
         <Button type="primary" icon="edit" onClick={editData}>
-          {editing ? "Stop editing" : "Edit"}
-        </Button>,
-        <Button
-          icon="save"
-          onClick={() =>
-            onEdit(id, {
-              expression: expression,
-              meaning: meaning,
-              metadata: metadata
-            })
-          }
-          hidden={!editing}
-        >
-          Save
+          {editing ? "Save" : "Edit"}
         </Button>,
         <Button type="danger" icon="delete" onClick={() => onDelete(id)}>
           Delete
