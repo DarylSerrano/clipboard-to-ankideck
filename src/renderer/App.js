@@ -2,6 +2,7 @@ import React from "react";
 import { ListClip } from "./components/listClips";
 import { Button, notification, Layout, Comment } from "antd";
 import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
+
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
 // const fs = require("electron").remote.require("fs");
@@ -16,9 +17,11 @@ function App() {
   const [clips, setClips] = React.useState([]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
+  const bottomClips = React.useRef(null);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = React.useState(true);
 
   React.useEffect(() => {
-    console.log("started listening");
+    // console.log("started listening");
     ipcRenderer.on(CLIPBOARD_LISTENER.DATA, (event, arg) => {
       console.log("New data: " + arg);
       setClips(old => [
@@ -37,6 +40,14 @@ function App() {
       ipcRenderer.removeAllListeners(CLIPBOARD_LISTENER.DATA);
     };
   }, []);
+
+  React.useEffect(scrollToBottom, [clips]);
+
+  function scrollToBottom() {
+    if (shouldScrollToBottom) {
+      bottomClips.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }
 
   async function getOutPath(e) {
     e.preventDefault();
@@ -91,6 +102,7 @@ function App() {
   }
 
   function editClip(index, editedClip) {
+    setShouldScrollToBottom(false);
     setClips(oldClips => {
       let newClips = [...oldClips];
       newClips.splice(index, 1, editedClip);
@@ -99,6 +111,7 @@ function App() {
   }
 
   function addClip() {
+    setShouldScrollToBottom(true);
     setClips(old => [
       ...old,
       {
@@ -155,6 +168,7 @@ function App() {
           listening={listening}
         ></ListClip>
         <Button onClick={addClip}>Add more</Button>
+        <div ref={bottomClips}></div>
       </Content>
     </Layout>
   );
