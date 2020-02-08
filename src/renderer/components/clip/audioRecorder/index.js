@@ -2,10 +2,11 @@ import React from "react";
 import { Button, message } from "antd";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 import AudioPlayer from "react-h5-audio-player";
+import { ipcRenderer } from "electron";
 import { visualize } from "./visualizer";
 import "../../../css/audioRecorder.css";
 import "react-h5-audio-player/lib/styles.css";
-
+import { UTILITY } from "../../../../events";
 
 export function AudioRecorder({ setAudioDataURL }) {
   const [recording, setRecording] = React.useState(false);
@@ -18,9 +19,12 @@ export function AudioRecorder({ setAudioDataURL }) {
     setAudioDataURL(base64String);
   };
 
-  const stopRecording = () => {
-    mediaRecorder.stop();
-    setRecording(false);
+  const stopRecording = async () => {
+    let isWindows = await ipcRenderer.invoke(UTILITY.IS_WINDOWS);
+    if(isWindows){
+      mediaRecorder.stop();
+      setRecording(false);
+    }
   };
 
   const handleStream = stream => {
@@ -52,23 +56,28 @@ export function AudioRecorder({ setAudioDataURL }) {
     };
   };
 
-  const takeScreenshot = async e => {
+  const recordAudio = async e => {
     e.preventDefault();
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          mandatory: {
-            chromeMediaSource: "desktop"
+      let isWindows = await ipcRenderer.invoke(UTILITY.IS_WINDOWS);
+      if (isWindows) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            mandatory: {
+              chromeMediaSource: "desktop"
+            }
+          },
+          video: {
+            mandatory: {
+              chromeMediaSource: "desktop"
+            }
           }
-        },
-        video: {
-          mandatory: {
-            chromeMediaSource: "desktop"
-          }
-        }
-      });
-      setRecording(true);
-      handleStream(stream);
+        });
+        setRecording(true);
+        handleStream(stream);
+      } else {
+        message.warning("Only supported on windows");
+      }
     } catch (e) {
       message.error("Can't record audio");
       console.log(e);
@@ -78,11 +87,12 @@ export function AudioRecorder({ setAudioDataURL }) {
   return (
     <>
       {recording ? <canvas ref={canvasEl}></canvas> : <></>}
-      <Button onClick={takeScreenshot}>Record Audio</Button>
+      <Button onClick={recordAudio}>Record Audio</Button>
       <Button
         onClick={() => {
           stopRecording();
         }}
+        disabled={!recording}
       >
         Stop recording audio
       </Button>

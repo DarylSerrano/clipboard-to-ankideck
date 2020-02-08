@@ -12,3 +12,7 @@ export const CLIPBOARD_EXPORTER = {
 export const SCREENSHOTER = {
   SCREENSHOT_FINISHED: "screenshot-finished"
 };
+
+export const UTILITY = {
+  IS_WINDOWS: "is-windows"
+};

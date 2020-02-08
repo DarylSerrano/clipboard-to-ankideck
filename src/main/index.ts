@@ -8,8 +8,9 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS
 } from "electron-devtools-installer";
 
-import { CLIPBOARD_EXPORTER, SCREENSHOTER, CLIPBOARD_LISTENER } from "./events";
+import { CLIPBOARD_EXPORTER, SCREENSHOTER, CLIPBOARD_LISTENER, UTILITY } from "./events";
 import {saveToFile} from "./exporter"
+import os from "os";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -151,3 +152,7 @@ ipcMain.on(SCREENSHOTER.SCREENSHOT_FINISHED, (e, args) => {
     mainWindow.focus();
   }
 });
+
+ipcMain.handle(UTILITY.IS_WINDOWS, async (event) => {
+  return os.platform() === "win32";
+})

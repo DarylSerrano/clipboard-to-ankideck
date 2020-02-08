@@ -24,6 +24,7 @@ function App() {
     // console.log("started listening");
     ipcRenderer.on(CLIPBOARD_LISTENER.DATA, (event, arg) => {
       console.log("New data: " + arg);
+      setShouldScrollToBottom(true);
       setClips(old => [
         ...old,
         {
