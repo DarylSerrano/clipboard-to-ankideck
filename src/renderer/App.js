@@ -13,13 +13,7 @@ import { ipcRenderer, remote } from "electron";
 const { Header, Footer, Content } = Layout;
 
 function App() {
-  const [clips, setClips] = React.useState([{
-    expression: "expression",
-    meaning: "meaning",
-    metadata: "metadata",
-    imageUrl: "imageUrl",
-    audioURL: "audioURL"
-  }]);
+  const [clips, setClips] = React.useState([]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
 
@@ -32,7 +26,9 @@ function App() {
         {
           expression: arg,
           meaning: "meaning here...",
-          metadata: "metadata here..."
+          metadata: "metadata here...",
+          imageUrl: false,
+          audioURL: false
         }
       ]);
     });
@@ -55,7 +51,7 @@ function App() {
       properties: ["openDirectory", "createDirectory", "promptToCreate"]
     });
 
-    // setOutPuthPath(JSON.stringify(saveDialogResult)); 
+    // setOutPuthPath(JSON.stringify(saveDialogResult));
     if (!saveDialogResult.canceled) {
       let firstPath = [...saveDialogResult.filePaths].pop();
       setOutPuthPath(firstPath);
@@ -102,34 +98,55 @@ function App() {
     });
   }
 
+  function addClip() {
+    setClips(old => [
+      ...old,
+      {
+        expression: "expression here",
+        meaning: "meaning here...",
+        metadata: "metadata here...",
+        imageUrl: false,
+        audioURL: false
+      }
+    ]);
+  }
+
   return (
     <Layout className="layout">
-      <Header style={{ position: 'fixed', zIndex: 1, width: '100%', bottom: 0,  textAlign: "center"}}>
-      <Button
-            type="primary"
-            icon="play-circle"
-            onClick={startListening}
-            disabled={listening}
-          >
-            Start listening
-          </Button>
-          <Button
-            type="danger"
-            icon="pause-circle"
-            onClick={stopListening}
-            disabled={!listening}
-          >
-            Stop listening
-          </Button>
-          <Button type="primary" onClick={getOutPath} icon="file">
-            Set save path
-          </Button>
-          <Button onClick={exportData} icon="save">
-            Save
-          </Button>
-          <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
+      <Header
+        style={{
+          position: "fixed",
+          zIndex: 1,
+          width: "100%",
+          bottom: 0,
+          textAlign: "center"
+        }}
+      >
+        <Button
+          type="primary"
+          icon="play-circle"
+          onClick={startListening}
+          disabled={listening}
+        >
+          Start listening
+        </Button>
+        <Button
+          type="danger"
+          icon="pause-circle"
+          onClick={stopListening}
+          disabled={!listening}
+        >
+          Stop listening
+        </Button>
+        <Button type="primary" onClick={getOutPath} icon="file">
+          Set save path
+        </Button>
+        <Button onClick={exportData} icon="save">
+          Save
+        </Button>
+        <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
       </Header>
-      <Content style={{ padding: '0% 10% 10% 10%' }}>
+      <Content style={{ padding: "0% 10% 10% 10%", "text-align": "center" }}>
         <h2>Clips</h2>
         <ListClip
           data={clips}
@@ -137,15 +154,7 @@ function App() {
           onDelete={deleteClip}
           listening={listening}
         ></ListClip>
-        <div>
-          {/* <AudioRecorder></AudioRecorder> */}
-        </div>
-        <div>
-          {/* <Screenshoter></Screenshoter> */}
-        </div>
-        <div>
-          {/* <PicturesWall></PicturesWall> */}
-        </div>
+        <Button onClick={addClip}>Add more</Button>
       </Content>
     </Layout>
   );
