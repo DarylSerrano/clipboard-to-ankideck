@@ -1,11 +1,10 @@
-import stringify from "csv-stringify"
+import stringify from "csv-stringify";
 import fs from "fs";
 import path from "path";
 import log from "electron-log";
 import moment from "moment";
-import {saveDataURIToFile} from "./mediaExporter";
-
-// TODO: Create folder paths and export images if there is some images
+import { saveDataURIToFile, DataURIFile } from "./mediaExporter";
+import faker from "faker";
 
 /*
 {
@@ -32,22 +31,38 @@ import {saveDataURIToFile} from "./mediaExporter";
 }
 */
 
-interface Clip {
+export interface ClipToExport {
+  image: string;
   expression: string;
   meaning: string;
   metadata: string;
   audio: string;
 }
 
-export interface ClipToExport extends Clip {
-  image: string;
+export interface ClipReceived {
+  expression: string;
+  meaning: string;
+  metadata: string;
+  audio: string | false;
+  image: DataURIFile | false;
 }
 
-export interface ClipReceived extends Clip {
-  image: {
-    name: string;
-    url: string;
+function createClipToExport(
+  expression: string,
+  meaning: string,
+  metadata: string,
+  imageFilename?: string,
+  soundFilename?: string
+) {
+  let clip: ClipToExport = {
+    expression: expression,
+    meaning: meaning,
+    metadata: metadata,
+    audio: soundFilename ? `[${soundFilename}]` : "",
+    image: imageFilename ? `<img src='${imageFilename}'>` : ""
   };
+
+  return clip;
 }
 
 async function saveMediaAndReturnClips(
@@ -56,25 +71,39 @@ async function saveMediaAndReturnClips(
 ) {
   let newClips = [];
   for (let i = 0; i < clips.length; i++) {
-    let imageFilename = await saveDataURIToFile(folderPath, clips[i].image);
-    let soundFilename = moment().unix() + ".opus";
-    let soundFile = { url: clips[i].audio, name: soundFilename };
-    await saveDataURIToFile(folderPath, soundFile);
+    let imageFilename: string | undefined;
+    let soundFilename: string | undefined;
 
-    let clip: ClipToExport = {
-      expression: clips[i].expression,
-      image: `<img src='${imageFilename}'>`,
-      audio: `[${soundFilename}]`,
-      meaning: clips[i].meaning,
-      metadata: clips[i].metadata
-    };
-    newClips.push(clip);
+    let clip: ClipReceived = clips[i];
+
+    if (clip.image) {
+      clip.image.name = `${moment().unix()}_${faker.random.number()}.jpeg`;
+      imageFilename = await saveDataURIToFile(folderPath, clip.image);
+    }
+
+    if (clip.audio) {
+      let soundFile: DataURIFile = { url: clip.audio, name: `${moment().unix()}_${faker.random.number()}.opus` };
+      soundFilename = await saveDataURIToFile(folderPath, soundFile);
+    }
+
+    let clipToExport = createClipToExport(
+      clip.expression,
+      clip.meaning,
+      clip.metadata,
+      imageFilename,
+      soundFilename
+    );
+
+    newClips.push(clipToExport);
   }
 
   return newClips;
 }
 
-export async function saveToFile(folderPath: string, data: Array<ClipReceived>) {
+export async function saveToFile(
+  folderPath: string,
+  data: Array<ClipReceived>
+) {
   let mediaCollectionPath = path.resolve(folderPath, "media.collection");
   await fs.promises.mkdir(mediaCollectionPath, {
     recursive: true
