@@ -33,6 +33,14 @@ export function Clip({ id, data, onEdit, onDelete }) {
         image: fileList[fileList.length - 1],
         audio: audioDataURL
       });
+    }else{
+      onEdit(id, {
+        expression: expression,
+        meaning: meaning,
+        metadata: metadata,
+        image: false,
+        audio: audioDataURL
+      });
     }
   }, [fileList, audioDataURL]);
 
