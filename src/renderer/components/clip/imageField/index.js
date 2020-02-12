@@ -32,11 +32,11 @@ export class PicturesWall extends React.Component {
     };
   }
 
-  handleCancel(){
+  handleCancel() {
     this.setState({ previewVisible: false });
   }
 
-  handleBeforeUpload(file){
+  handleBeforeUpload(file) {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG file!");
@@ -45,7 +45,7 @@ export class PicturesWall extends React.Component {
     return false;
   }
 
-  async handlePreview(file){
+  async handlePreview(file) {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -56,25 +56,32 @@ export class PicturesWall extends React.Component {
     });
   }
 
-  async handleChange(info, updateFileList){
+  async handleChange(info, updateFileList) {
     if (!this.errorUpload) {
-      let fileList = [...info.fileList];
+      let fileList = [];
+      const { status } = info.file;
+      console.log("status: " + status);
+      if (status === "removed") {
+        fileList = [];
+      } else {
+        fileList = [...info.fileList];
 
-      // 1. Limit the number of uploaded files
-      // Only to show two recent uploaded files, and old ones will be replaced by the new
-      fileList = fileList.slice(-1);
+        // 1. Limit the number of uploaded files
+        // Only to show two recent uploaded files, and old ones will be replaced by the new
+        fileList = fileList.slice(-1);
 
-      // 2. Read from response and show file link (really ugly hack for async map)
-      fileList = await (async () => {
-        return Promise.all(
-          fileList.map(async file => {
-            if (file.originFileObj) {
-              file.url = await getBase64(file.originFileObj);
-            }
-            return file;
-          })
-        );
-      })();
+        // 2. Read from response and show file link (really ugly hack for async map)
+        fileList = await (async () => {
+          return Promise.all(
+            fileList.map(async file => {
+              if (file.originFileObj) {
+                file.url = await getBase64(file.originFileObj);
+              }
+              return file;
+            })
+          );
+        })();
+      }
 
       updateFileList(fileList);
       // this.setState({ fileList });
@@ -97,11 +104,11 @@ export class PicturesWall extends React.Component {
               listType="picture-card"
               multiple={false}
               fileList={fileList}
-              onPreview={(file) => this.handlePreview(file)}
+              onPreview={file => this.handlePreview(file)}
               onChange={async info => {
                 await this.handleChange(info, updateFileList);
               }}
-              beforeUpload={(file) => this.handleBeforeUpload(file)}
+              beforeUpload={file => this.handleBeforeUpload(file)}
             >
               <p className="ant-upload-drag-icon">
                 <Icon type="inbox" />
@@ -117,7 +124,7 @@ export class PicturesWall extends React.Component {
             <Modal
               visible={previewVisible}
               footer={null}
-              onCancel={(e) => this.handleCancel(e)}
+              onCancel={e => this.handleCancel(e)}
             >
               <img alt="example" style={{ width: "100%" }} src={previewImage} />
             </Modal>
