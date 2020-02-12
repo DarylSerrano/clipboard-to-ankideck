@@ -11,7 +11,7 @@ import { ipcRenderer } from "electron";
 
 export function Screenshoter() {
   const [windowToScreenshot, setwindowToScreenshot] = React.useState(
-    "Screen 1"
+    "Entire Screen"
   );
 
   const screenShotCTX = React.useContext(ScreenshotContext);
