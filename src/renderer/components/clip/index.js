@@ -44,6 +44,13 @@ export function Clip({ id, data, onEdit, onDelete }) {
     }
   }, [fileList, audioDataURL]);
 
+  React.useEffect(() => {
+    const {expression, meaning, metadata} = data;
+    setExpression(expression);
+    setMeaning(meaning);
+    setMetadata(metadata);
+  }, [data]);
+
   function editData(e) {
     e.preventDefault();
 
