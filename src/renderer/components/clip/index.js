@@ -14,14 +14,7 @@ export function Clip({ id, data, onEdit, onDelete }) {
   const [expression, setExpression] = React.useState(data.expression);
   const [meaning, setMeaning] = React.useState(data.meaning);
   const [metadata, setMetadata] = React.useState(data.metadata);
-  const [fileList, setFileList] = React.useState([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://cdn.awwni.me/18awg.jpg"
-    }
-  ]);
+  const [fileList, setFileList] = React.useState([]);
   const [audioDataURL, setAudioDataURL] = React.useState("");
 
   React.useEffect(() => {

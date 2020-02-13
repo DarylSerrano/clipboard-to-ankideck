@@ -17,14 +17,7 @@ export class PicturesWall extends React.Component {
   state = {
     previewVisible: false,
     previewImage: "",
-    fileList: [
-      {
-        uid: "-1",
-        name: "image.png",
-        status: "done",
-        url: "https://cdn.awwni.me/18awg.jpg"
-      }
-    ]
+    fileList: []
   };
 
   handleCancel = () => this.setState({ previewVisible: false });
@@ -40,7 +33,6 @@ export class PicturesWall extends React.Component {
     });
   };
 
-
   handleChange = async info => {
     let fileList = [...info.fileList];
 
@@ -50,30 +42,30 @@ export class PicturesWall extends React.Component {
 
     // 2. Read from response and show file link
     fileList = fileList.map(async file => {
-        if(file.originFileObj){
-            file.url = await getBase64(file.originFileObj);
-        }
+      if (file.originFileObj) {
+        file.url = await getBase64(file.originFileObj);
+      }
       return file;
     });
 
     this.setState({ fileList });
   };
 
-// handleChange = ({ fileList }) => {
-        //   this.setState({fileList})
-    // let newFileList = fileList.slice(-2);
+  // handleChange = ({ fileList }) => {
+  //   this.setState({fileList})
+  // let newFileList = fileList.slice(-2);
 
-    // // 2. Read from response and show file link
-    // newFileList = newFileList.map(file => {
-    //   if (file.response) {
-    //     // Component will show file.url as link
-    //     file.url = file.response.url;
-    //   }
-    //   return file;
-    // });
+  // // 2. Read from response and show file link
+  // newFileList = newFileList.map(file => {
+  //   if (file.response) {
+  //     // Component will show file.url as link
+  //     file.url = file.response.url;
+  //   }
+  //   return file;
+  // });
 
-    // this.setState({ newFileList });
-//   };
+  // this.setState({ newFileList });
+  //   };
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;

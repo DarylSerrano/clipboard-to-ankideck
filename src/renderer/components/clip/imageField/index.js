@@ -20,14 +20,6 @@ export class PicturesWall extends React.Component {
     this.state = {
       previewVisible: false,
       previewImage: "",
-      // fileList: [
-      //   {
-      //     uid: "-1",
-      //     name: "image.png",
-      //     status: "done",
-      //     url: "https://cdn.awwni.me/18awg.jpg"
-      //   }
-      // ],
       errorUpload: false
     };
   }
