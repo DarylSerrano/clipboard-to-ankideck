@@ -11,7 +11,7 @@
 ## Download
 ### Windows
 [Download](https://github.com)
-## Linux
+### Linux
 [Download](https://github.com)
 
 ## Development Scripts
