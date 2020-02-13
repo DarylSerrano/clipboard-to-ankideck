@@ -1,12 +1,11 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
 import { Button, notification, Layout, Comment } from "antd";
-import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
+import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER, SET_SAVE_PATH } from "../events";
+
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
-// const fs = require("electron").remote.require("fs");
-
-import { ipcRenderer, remote } from "electron";
+import { ipcRenderer } from "electron";
 // const electron = window.require('electron');
 // const ipcRenderer  = electron.ipcRenderer;
 
@@ -16,17 +15,22 @@ function App() {
   const [clips, setClips] = React.useState([]);
   const [outputPath, setOutPuthPath] = React.useState("");
   const [listening, setListening] = React.useState(false);
+  const bottomClips = React.useRef(null);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = React.useState(true);
 
   React.useEffect(() => {
-    console.log("started listening");
+    // console.log("started listening");
     ipcRenderer.on(CLIPBOARD_LISTENER.DATA, (event, arg) => {
-      console.log("New data: " + arg)
+      console.log("New data: " + arg);
+      setShouldScrollToBottom(true);
       setClips(old => [
         ...old,
         {
           expression: arg,
           meaning: "meaning here...",
-          metadata: "metadata here..."
+          metadata: "metadata here...",
+          imageUrl: false,
+          audioURL: false
         }
       ]);
     });
@@ -36,18 +40,22 @@ function App() {
     };
   }, []);
 
+  React.useEffect(scrollToBottom, [clips]);
+
+  function scrollToBottom() {
+    if (shouldScrollToBottom) {
+      bottomClips.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
   async function getOutPath(e) {
     e.preventDefault();
-    let saveDialogResult = await remote.dialog.showSaveDialog({
-      title: "Select save path",
-      defaultPath: "clips.tsv",
-      filters: [
-        { name: "Anki .tsv", extensions: ["tsv"] },
-        { name: "All Files", extensions: ["*"] }
-      ]
-    });
+    const saveDialogResult = await ipcRenderer.invoke(SET_SAVE_PATH);
+
+    // setOutPuthPath(JSON.stringify(saveDialogResult));
     if (!saveDialogResult.canceled) {
-      setOutPuthPath(saveDialogResult.filePath);
+      let firstPath = [...saveDialogResult.filePaths].pop();
+      setOutPuthPath(firstPath);
     }
   }
 
@@ -84,6 +92,7 @@ function App() {
   }
 
   function editClip(index, editedClip) {
+    setShouldScrollToBottom(false);
     setClips(oldClips => {
       let newClips = [...oldClips];
       newClips.splice(index, 1, editedClip);
@@ -91,12 +100,56 @@ function App() {
     });
   }
 
+  function addClip() {
+    setShouldScrollToBottom(true);
+    setClips(old => [
+      ...old,
+      {
+        expression: "expression here",
+        meaning: "meaning here...",
+        metadata: "metadata here...",
+        imageUrl: false,
+        audioURL: false
+      }
+    ]);
+  }
+
   return (
-    <Layout>
-      <Header>
-        <h1>Clipboard to anki deck</h1>
+    <Layout className="layout">
+      <Header
+        style={{
+          position: "fixed",
+          zIndex: 1,
+          width: "100%",
+          bottom: 0,
+          textAlign: "center"
+        }}
+      >
+        <Button
+          type="primary"
+          icon="play-circle"
+          onClick={startListening}
+          disabled={listening}
+        >
+          Start listening
+        </Button>
+        <Button
+          type="danger"
+          icon="pause-circle"
+          onClick={stopListening}
+          disabled={!listening}
+        >
+          Stop listening
+        </Button>
+        <Button type="primary" onClick={getOutPath} icon="file">
+          Set save path
+        </Button>
+        <Button onClick={exportData} icon="save">
+          Save
+        </Button>
+        <Comment content={<p> Path to save: {outputPath}</p>}></Comment>
       </Header>
-      <Content>
+      <Content style={{ padding: "0% 10% 10% 10%", "text-align": "center" }}>
         <h2>Clips</h2>
         <ListClip
           data={clips}
@@ -104,45 +157,9 @@ function App() {
           onDelete={deleteClip}
           listening={listening}
         ></ListClip>
+        <Button onClick={addClip}>Add more</Button>
+        <div ref={bottomClips}></div>
       </Content>
-      <Footer
-        style={{
-          position: "fixed",
-          zIndex: 1,
-          width: "100%",
-          textAlign: "center",
-          bottom: 0
-        }}
-      >
-        <div>
-          <Button
-            type="primary"
-            icon="play-circle"
-            onClick={startListening}
-            disabled={listening}
-          >
-            Start listening
-          </Button>
-          <Button
-            type="danger"
-            icon="pause-circle"
-            onClick={stopListening}
-            disabled={!listening}
-          >
-            Stop listening
-          </Button>
-          <Button type="primary" onClick={getOutPath} icon="file">
-            Set save path
-          </Button>
-          <Button onClick={exportData} icon="save">
-            Save
-          </Button>
-          <Comment content={
-            (<p> Path to save: {outputPath}
-              </p>)
-          }></Comment>
-        </div>
-      </Footer>
     </Layout>
   );
 }

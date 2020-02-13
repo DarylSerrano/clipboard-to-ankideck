@@ -2,54 +2,67 @@
   "name": "clipboard-to-ankideck",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "author": "Daryl Serrano Hipolito",
+  "description": "Electron app that listens to clipboard and converts each text lines into decks of anki",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "postinstall": "electron-builder install-app-deps"
+  },
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
-    "antd": "^3.26.5",
+    "@types/node": "12.12.6",
+    "antd": "^3.26.7",
     "csv": "^5.3.1",
-    "electron-log": "^4.0.2",
+    "csv-stringify": "^5.3.6",
+    "data-uri-to-buffer": "^3.0.0",
+    "electron-is-dev": "^1.1.0",
+    "electron-log": "^4.0.4",
     "faker": "^4.1.0",
+    "moment": "^2.24.0",
+    "prop-types": "^15.7.2",
+    "random": "^2.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
-  },
-  "productName": "Clipboard-to-ankideck",
-  "homepage": "./",
-  "main": "src/electron-starter.js",
-  "scripts": {
-    "start": "craco start",
-    "build": "craco build",
-    "build:package": "electron-packager .",
-    "test": "craco test",
-    "eject": "react-scripts eject",
-    "electron": "electron .",
-    "dev": "nf start",
-    "dev:production": "npm run build && npm run electron",
-    "electron-dev:win": "set ELECTRON_START_URL=http://localhost:3000 && electron ."
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "source-map-support": "^0.5.12"
   },
   "devDependencies": {
-    "craco": "0.0.3",
-    "del": "^5.1.0",
-    "electron": "^7.1.7",
-    "electron-devtools-installer": "^2.2.4",
-    "electron-packager": "^14.1.1",
-    "foreman": "^3.0.1",
-    "load-json-file": "^6.2.0"
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@types/electron-devtools-installer": "^2.2.0",
+    "@types/faker": "^4.1.9",
+    "@types/random": "^2.1.0",
+    "@types/react": "^16.9.19",
+    "@types/react-dom": "^16.9.5",
+    "babel-eslint": "^10.0.3",
+    "electron": "7.1.11",
+    "electron-builder": "^22.3.2",
+    "electron-webpack": "^2.7.4",
+    "electron-webpack-eslint": "^5.0.1",
+    "electron-webpack-ts": "^3.2.0",
+    "react-h5-audio-player": "^2.3.0",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.5",
+    "webpack": "~4.41.5"
+  },
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "webpack.renderer.additions.js"
+    },
+    "main": {
+      "webpackConfig": "webpack.main.config.js"
+    }
+  },
+  "build": {
+    "appId": "com.clipanki",
+    "productName": "Clipboard to anki deck",
+    "win": {
+      "target": "zip"
+    },
+    "linux": {
+      "target": "zip"
+    }
   }
 }
