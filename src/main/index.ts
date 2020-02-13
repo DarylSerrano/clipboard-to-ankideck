@@ -4,9 +4,6 @@ import { app, BrowserWindow, ipcMain, dialog, clipboard } from "electron";
 import * as path from "path";
 import { format as formatUrl } from "url";
 import log from "electron-log";
-import installExtension, {
-  REACT_DEVELOPER_TOOLS
-} from "electron-devtools-installer";
 
 import { CLIPBOARD_EXPORTER, SCREENSHOTER, CLIPBOARD_LISTENER, UTILITY, SET_SAVE_PATH } from "./events";
 import {saveToFile} from "./exporter"
@@ -22,7 +19,8 @@ let lastClip = "";
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    webPreferences: { nodeIntegration: true }
+    webPreferences: { nodeIntegration: true },
+    title: "Clipanki"
   });
 
   if (isDevelopment) {
@@ -53,9 +51,11 @@ function createMainWindow() {
   });
 
   if (isDevelopment) {
-    installExtension(REACT_DEVELOPER_TOOLS)
+    import ("electron-devtools-installer").then((electronDevtools) => {
+      electronDevtools.default(electronDevtools.REACT_DEVELOPER_TOOLS)
       .then(name => log.info(`Added Extension:  ${name}`))
       .catch(err => log.error("An error occurred: ", err));
+    });
   }
 
   return window;

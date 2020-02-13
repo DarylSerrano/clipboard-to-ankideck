@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "author": "Daryl Serrano Hipolito",
+  "description": "Electron app that listens to clipboard and converts each text lines into decks of anki",
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
@@ -36,7 +38,7 @@
     "@types/react-dom": "^16.9.5",
     "babel-eslint": "^10.0.3",
     "electron": "7.1.11",
-    "electron-builder": "^22.2.0",
+    "electron-builder": "^22.3.2",
     "electron-webpack": "^2.7.4",
     "electron-webpack-eslint": "^5.0.1",
     "electron-webpack-ts": "^3.2.0",
@@ -51,6 +53,16 @@
     },
     "main": {
       "webpackConfig": "webpack.main.config.js"
+    }
+  },
+  "build": {
+    "appId": "com.clipanki",
+    "productName": "Clipboard to anki deck",
+    "win": {
+      "target": "zip"
+    },
+    "linux": {
+      "target": "zip"
     }
   }
 }
