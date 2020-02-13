@@ -16,3 +16,5 @@ export const SCREENSHOTER = {
 export const UTILITY = {
   IS_WINDOWS: "is-windows"
 };
+
+export const SET_SAVE_PATH= "set-save-path";

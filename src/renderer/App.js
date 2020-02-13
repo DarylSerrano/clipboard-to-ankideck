@@ -1,13 +1,11 @@
 import React from "react";
 import { ListClip } from "./components/listClips";
 import { Button, notification, Layout, Comment } from "antd";
-import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER } from "../events";
+import { CLIPBOARD_EXPORTER, CLIPBOARD_LISTENER, SET_SAVE_PATH } from "../events";
 
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
 
-// const fs = require("electron").remote.require("fs");
-
-import { ipcRenderer, remote } from "electron";
+import { ipcRenderer } from "electron";
 // const electron = window.require('electron');
 // const ipcRenderer  = electron.ipcRenderer;
 
@@ -52,16 +50,7 @@ function App() {
 
   async function getOutPath(e) {
     e.preventDefault();
-    let homePath = remote.require("os").homedir();
-    let saveDialogResult = await remote.dialog.showOpenDialog({
-      title: "Select folder to save the deck",
-      defaultPath: homePath,
-      filters: [
-        // { name: "Anki .tsv", extensions: ["tsv"] },
-        { name: "All Files", extensions: ["*"] }
-      ],
-      properties: ["openDirectory", "createDirectory", "promptToCreate"]
-    });
+    const saveDialogResult = await ipcRenderer.invoke(SET_SAVE_PATH);
 
     // setOutPuthPath(JSON.stringify(saveDialogResult));
     if (!saveDialogResult.canceled) {

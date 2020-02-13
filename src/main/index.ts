@@ -8,7 +8,7 @@ import installExtension, {
   REACT_DEVELOPER_TOOLS
 } from "electron-devtools-installer";
 
-import { CLIPBOARD_EXPORTER, SCREENSHOTER, CLIPBOARD_LISTENER, UTILITY } from "./events";
+import { CLIPBOARD_EXPORTER, SCREENSHOTER, CLIPBOARD_LISTENER, UTILITY, SET_SAVE_PATH } from "./events";
 import {saveToFile} from "./exporter"
 import os from "os";
 
@@ -155,4 +155,20 @@ ipcMain.on(SCREENSHOTER.SCREENSHOT_FINISHED, (e, args) => {
 
 ipcMain.handle(UTILITY.IS_WINDOWS, async (event) => {
   return os.platform() === "win32";
+})
+
+ipcMain.handle(SET_SAVE_PATH, async (event) => {
+  let homePath = os.homedir();
+
+  let saveDialogResult = await dialog.showOpenDialog({
+    title: "Select folder to save the deck",
+    defaultPath: homePath,
+    filters: [
+      // { name: "Anki .tsv", extensions: ["tsv"] },
+      { name: "All Files", extensions: ["*"] }
+    ],
+    properties: ["openDirectory", "createDirectory", "promptToCreate"]
+  });
+
+  return saveDialogResult;
 })
