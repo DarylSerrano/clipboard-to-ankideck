@@ -32,3 +32,6 @@ yarn dist
 # `yarn compile` & create unpacked build with electron-builder
 yarn dist:dir
 ```
+
+## License
+[Apache License 2.0](https://github.com/DarylSerrano/clipboard-to-ankideck/blob/master/LICENSE)
