@@ -10,9 +10,9 @@
 
 ## Download
 ### Windows
-[Download](https://github.com)
+[Download](https://github.com/DarylSerrano/clipboard-to-ankideck/releases/download/0.1.0-pre/Clipboard.to.anki.deck-0.1.0-pre-win.zip)
 ### Linux
-[Download](https://github.com)
+[Download](https://github.com/DarylSerrano/clipboard-to-ankideck/releases/download/0.1.0-pre/clipboard-to-ankideck-0.1.0-pre-linux.zip)
 
 ## Development Scripts
 
